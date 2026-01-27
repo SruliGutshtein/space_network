@@ -14,7 +14,7 @@ def attempt_transmission(packet):
             network.send(packet)
             success = True
         except TemporalInterferenceError:
-            print("Temporary interference, please retry")
+            print("Temporary interruption, please wait while I try again")
             time.sleep(2)
         except DataCorruptedError:
             print("Data corrupted during transmission")
@@ -29,4 +29,5 @@ network = SpaceNetwork(2)
 sat1 = Satellite("Sat1", 100)
 sat2 = Satellite("Sat2", 200)
 my_packet = Packet("היי, אחת שתיים, שומע שומע?", sat1, sat2)
-network.send(my_packet)
+attempt_transmission(my_packet)
+
