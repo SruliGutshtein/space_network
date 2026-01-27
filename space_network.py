@@ -28,6 +28,13 @@ def attempt_transmission(packet):
             print("Target out of range")
             raise BrokenConnectionError("Transmission failed")
 
+class RelayPacket(Packet):
+    def __init__(self, packet_to_relay, sender, proxy):
+        super().__init__(data=packet_to_relay, receiver=proxy, sender= sender)
+
+    def __repr__(self):
+        return f"RelayPacket(Relaying [{self.data}] to {self.receiver} from {self.sender})"
+
 
 
 
