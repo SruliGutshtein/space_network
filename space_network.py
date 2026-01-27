@@ -38,5 +38,9 @@ network = SpaceNetwork(3)
 sat1 = Satellite("Sat1", 100)
 sat2 = Satellite("Sat2", 200)
 my_packet = Packet("היי, אחת שתיים, שומע שומע?", sat1, sat2)
-attempt_transmission(my_packet)
+try:
+    attempt_transmission(my_packet)
+except BrokenConnectionError:
+    print("Transmission failed")
+
 
