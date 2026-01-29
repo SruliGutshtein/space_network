@@ -5,7 +5,12 @@ from space_network_lib import SpaceEntity, SpaceNetwork, Packet, TemporalInterfe
 class Satellite(SpaceEntity):
     def receive_signal(self, packet):
         """מדפיסה את הפקטה עם שם הלווין"""
-        print(f"[{self.name}] Received: {packet}")
+        if isinstance(packet, RelayPacket):
+            inner_packet = packet.data
+            print(f"Unwrapping and forwarding to {inner_packet.receiver}")
+            attempt_transmission(inner_packet)
+        else:
+            print(f"[{self.name}] Received: {packet}")
 
 
 class BrokenConnectionError(CommsError):
@@ -28,6 +33,16 @@ def attempt_transmission(packet):
             print("Target out of range")
             raise BrokenConnectionError("Transmission failed")
 
+class RelayPacket(Packet):
+    def __init__(self, packet_to_relay, sender, proxy):
+        super().__init__(data=packet_to_relay, receiver=proxy, sender= sender)
+
+    def __repr__(self):
+        return f"RelayPacket(Relaying [{self.data}] to {self.receiver} from {self.sender})"
+
+class GroundStation(SpaceEntity):
+    def receive_signal(self, packet):
+        print(f"[{self.name}] Signal received (ignoring).")
 
 
 
@@ -43,4 +58,7 @@ try:
 except BrokenConnectionError:
     print("Transmission failed")
 
-
+earth = GroundStation(name="Earth", distance_from_earth=0)
+p_final = Packet(data="Hello from Earth!!",sender=sat1, receiver=sat2)
+p_earth_to_sat1 = RelayPacket(packet_to_relay=p_final, sender=earth, proxy=sat1)
+attempt_transmission(p_earth_to_sat1)
