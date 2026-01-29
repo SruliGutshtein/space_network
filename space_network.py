@@ -5,7 +5,12 @@ from space_network_lib import SpaceEntity, SpaceNetwork, Packet, TemporalInterfe
 class Satellite(SpaceEntity):
     def receive_signal(self, packet):
         """מדפיסה את הפקטה עם שם הלווין"""
-        print(f"[{self.name}] Received: {packet}")
+        if isinstance(packet, RelayPacket):
+            inner_packet = packet.data
+            print(f"Unwrapping and forwarding to {inner_packet.receiver}")
+            attempt_transmission(inner_packet)
+        else:
+            print(f"[{self.name}] Received: {packet}")
 
 
 class BrokenConnectionError(CommsError):
