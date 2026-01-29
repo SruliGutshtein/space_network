@@ -40,6 +40,9 @@ class RelayPacket(Packet):
     def __repr__(self):
         return f"RelayPacket(Relaying [{self.data}] to {self.receiver} from {self.sender})"
 
+class GroundStation(SpaceEntity):
+    def receive_signal(self, packet):
+        print(f"[{self.name}] Signal received (ignoring).")
 
 
 
@@ -55,4 +58,7 @@ try:
 except BrokenConnectionError:
     print("Transmission failed")
 
-
+earth = GroundStation(name="Earth", distance_from_earth=0)
+p_final = Packet(data="Hello from Earth!!",sender=sat1, receiver=sat2)
+p_earth_to_sat1 = RelayPacket(packet_to_relay=p_final, sender=earth, proxy=sat1)
+attempt_transmission(p_earth_to_sat1)
