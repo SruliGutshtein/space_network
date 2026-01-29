@@ -52,6 +52,8 @@ class GroundStation(SpaceEntity):
 network = SpaceNetwork(3)
 sat1 = Satellite("Sat1", 100)
 sat2 = Satellite("Sat2", 200)
+sat3 = Satellite("Sat3", 300)
+sat4 = Satellite("Sat4", 400)
 my_packet = Packet("היי, אחת שתיים, שומע שומע?", sat1, sat2)
 try:
     attempt_transmission(my_packet)
@@ -59,6 +61,12 @@ except BrokenConnectionError:
     print("Transmission failed")
 
 earth = GroundStation(name="Earth", distance_from_earth=0)
-p_final = Packet(data="Hello from Earth!!",sender=sat1, receiver=sat2)
-p_earth_to_sat1 = RelayPacket(packet_to_relay=p_final, sender=earth, proxy=sat1)
-attempt_transmission(p_earth_to_sat1)
+# p_final = Packet(data="Hello from Earth!!",sender=sat1, receiver=sat2)
+# p_earth_to_sat1 = RelayPacket(packet_to_relay=p_final, sender=earth, proxy=sat1)
+# attempt_transmission(p_earth_to_sat1)
+
+p_final = Packet(data="Hello From Earth!", sender=sat3, receiver=sat4)
+p_layer_3 = RelayPacket(packet_to_relay=p_final, sender=sat2, proxy=sat3)
+p_layer_2 = RelayPacket(packet_to_relay=p_layer_3, sender=sat1, proxy=sat2)
+p_layer_1 = RelayPacket(packet_to_relay=p_layer_2, sender=earth, proxy=sat1)
+attempt_transmission(p_layer_1)
